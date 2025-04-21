@@ -14,6 +14,7 @@ resource "aws_iam_role" "producer_role" {
   })
 }
 
+data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role_policy" "producer_role_policy" {
   name = "${var.pj_name}-producer-role"
@@ -23,15 +24,10 @@ resource "aws_iam_role_policy" "producer_role_policy" {
     Statement = [
       {
         Action = [
-        "kinesis:GetRecords",
-        "kinesis:GetShardIterator",
-        "kinesis:DescribeStream",
-        "kinesis:DescribeStreamSummary",
-        "kinesis:ListShards",
-        "kinesis:ListStreams"
+        "kinesis:PutRecord",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:kinesis:::stream/${var.stream_name}"
+        Resource = "arn:aws:kinesis:${var.region}:${data.aws_caller_identity.current.account_id}:stream/${var.stream_name}"
       },
     ]
   })
@@ -61,7 +57,7 @@ resource "aws_iam_role" "processor_role" {
 
 resource "aws_iam_role_policy" "processor_role_policy" {
   name = "${var.pj_name}-processor-role"
-  role = aws_iam_role.producer_role.id
+  role = aws_iam_role.processor_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -75,7 +71,7 @@ resource "aws_iam_role_policy" "processor_role_policy" {
         "kinesis:ListStreams"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:kinesis:::stream/${var.stream_name}"
+        Resource = "arn:aws:kinesis:${var.region}:${data.aws_caller_identity.current.account_id}:stream/${var.stream_name}"
       },
     {
       "Effect": "Allow",

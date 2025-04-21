@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 s3 = boto3.client('s3')
-BUCKET_NAME = os.environ(['Bucket_name'])
+BUCKET_NAME = os.environ['Bucket_name']
 
 def lambda_handler(event, context):
     for record in event.get('Records', []):
@@ -13,12 +13,7 @@ def lambda_handler(event, context):
             payload_stage1 = base64.b64decode(record['kinesis']['data']).decode('utf-8')
             print("Decoded payload:", payload_stage1)
 
-            try:
-                payload_stage2 = base64.b64decode(payload_stage1).decode('utf-8')
-                data = json.loads(payload_stage2)
-            except Exception as e:
-                print("デコードまたはJSON変換に失敗:", e)
-                continue
+            data = json.loads(payload_stage1)
 
             device_id = data.get('device_id', 'unknown')
 
