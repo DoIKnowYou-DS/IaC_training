@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "local" {
-    path = "local.tfstate"
+    path = "prod/local.tfstate"
   }
   required_version = "~> 1.11.4"
 }
