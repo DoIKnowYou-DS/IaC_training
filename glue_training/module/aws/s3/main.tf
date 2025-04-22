@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = "${var.pj_name}-bucket"
+  bucket = "${var.env_name}-${var.pj_name}-bucket"
 }
 
 # /raw/ フォルダっぽく見せる

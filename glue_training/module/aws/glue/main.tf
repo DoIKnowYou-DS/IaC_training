@@ -1,6 +1,6 @@
 resource "aws_glue_crawler" "crawler_raw" {
   database_name = aws_glue_catalog_database.etl_db.name
-  name          = "${var.pj_name}-crawler-raw"
+  name          = "${var.env_name}-${var.pj_name}-crawler-raw"
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
@@ -11,7 +11,7 @@ resource "aws_glue_crawler" "crawler_raw" {
 }
 
 resource "aws_glue_job" "glue_job" {
-  name = "${var.pj_name}-glue-job"
+  name = "${var.env_name}-${var.pj_name}-glue-job"
   role_arn = aws_iam_role.glue_role.arn
   command {
     script_location = "s3://${var.s3_bucket}/script/glue_job.py"
@@ -27,7 +27,7 @@ resource "aws_glue_job" "glue_job" {
 
 resource "aws_glue_crawler" "crawler_processed" {
   database_name = aws_glue_catalog_database.etl_db.name
-  name          = "${var.pj_name}-crawler-processed"
+  name          = "${var.env_name}-${var.pj_name}-crawler-processed"
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
